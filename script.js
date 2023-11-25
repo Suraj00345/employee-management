@@ -1,5 +1,8 @@
 const form = document.getElementById("form");
-const recordsContainer = document.getElementById("records-container")
+const recordsContainer = document.getElementById("records-container");
+const createButton = document.querySelector("#form button");
+
+let formState = "CREATE";  // tis has 2 values create and update
 
 let empId = 1000;
 const employeesList = [];
@@ -15,13 +18,25 @@ const onSubmitForm = (event) =>  {
         team: event.target.team.value,
         companyName: event.target.companyName.value
     }
-    addNewEmployeeRecord(employee);
+    if(formState==="CREATE"){
+        addNewEmployeeRecord(employee);
+    }
+     else if(formState==="UPDATE"){
+        // update the employee corresponding record
+        formState="CREATE"
+        createButton.innerText="Create Employee";
+     }
 
     // when we feel the from..next time form need to reset
     form.reset();
 }
 
 function deleteRecord(event){
+
+    if(formState==="UPDATE"){
+        alert("please update the record before delete anything");
+        return;
+    }
     // delete button refernce
     const deleteButton = event.target;
 
@@ -39,6 +54,25 @@ function deleteRecord(event){
     }
 }
 
+function fillFormWithData(employee){
+
+    // employeeId: ++empId,
+    // name: event.target.name.value,
+    // salary: event.target.salary.value,
+    // role: event.target.role.value,
+    // team: event.target.team.value,
+    // companyName: event.target.companyName.value
+
+    for(let key in employee){
+        if(key !=="employeeId"){
+        form[key].value = employee[key];
+        }
+    }
+
+    createButton.innerText="Update Employee";
+    formState = "UPDATE";
+
+}
 
 function editRecord(event){
     const editButton = event.target;
@@ -46,7 +80,7 @@ function editRecord(event){
     for( let i=0;i<employeesList.length;i++)
     {
         if(currentEmployeeId === employeesList[i].employeeId){
-            console.log(employeesList[i]);
+            fillFormWithData(employeesList[i])
             break;
         }
     }
